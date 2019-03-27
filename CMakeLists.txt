@@ -3,4 +3,4 @@ project(Labo3)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(Labo3 main.cpp)
+add_executable(Labo3 main.cpp CountingSort.h)
