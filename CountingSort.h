@@ -11,6 +11,22 @@
 
 namespace asd1 {
 
+
+    template<typename T>
+    class Binary {
+    public:
+        Binary(size_t shift) : shift(shift) {}
+
+        T operator()(T value) {
+            unsigned mask = 0xff;
+
+            return ((value >> 8 * shift) & mask);
+        }
+
+    private:
+        size_t shift;
+    };
+
     /**
      Tri comptage générique
 
@@ -88,12 +104,22 @@ namespace asd1 {
      */
     void RadixSort(std::vector<unsigned int> &v) {
 
-        // functor doit retourner un size_T doit être un template
-        //      prend qu'un sul paramètre
-        //      sacrifier une chèvre
+        std::vector<unsigned> sorted(v.size(), 0);
 
+        // loop through unsigned each bytes of unsigned ints
+        for (size_t i = 0; i < sizeof(unsigned); ++i) {
 
+            // create new Binary functor with the position
+            //  of the current byte we are working on
+            Binary<unsigned> binary(i);
 
+            // sort the given vector using the Binary functor to sort
+            //  using the Binary value.
+            CountingSort(v.begin(), v.end(), sorted.begin(), binary);
+
+            // save the current state of the sort
+            v = sorted;
+        }
     }
 }
 
