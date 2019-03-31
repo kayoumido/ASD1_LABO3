@@ -274,35 +274,24 @@ void test1() {
 
     high_resolution_clock::time_point t1_selectionSort, t1_quickSort, t1_countingSort;
     high_resolution_clock::time_point t2_selectionSort, t2_quickSort, t2_countingSort;
-    double selectionSortAverageTime, quickSortAverageTime, countingSortAverageTime = 0.;
+    double selectionSortAverageTime = 0., quickSortAverageTime = 0., countingSortAverageTime = 0.;
 
-    //uniform_int_distribution<unsigned> alea (randMin, randMax);
-    //mt19937_64 gen(0);
+    uniform_int_distribution<unsigned> alea (randMin, randMax);
+    mt19937_64 gen(0);
 
     for (unsigned int &size : vectorSizes) {
 
         for (unsigned k = 0; k < REPLICATION; ++k) {
 
-            // Create a new vector contains : 1 ... currentSize)
+            // Create a new vector where it's size varies depending on the values in vectorSizes
             vector<unsigned> v1(size), v2(size), v3(size), w(size);
 
-
-            //generate(v1.begin(), v1.end(), [&](){ return alea(gen); });
-            //generate(v2.begin(), v2.end(), [&](){ return alea(gen); });
-            //generate(v3.begin(), v3.end(), [&](){ return alea(gen); });
-
-
-            unsigned max = 0;
-            for (unsigned j = 0; j < size; ++j) {
-                unsigned randNum = rand() % (randMax - randMin + 1) + randMin;
-
-                if (randNum > max) max = randNum;
-                v1.at(j) = randNum;
-            }
-
+            // Generate random data in the vectors
+            generate(v1.begin(), v1.end(), [&](){ return alea(gen); });
             v2 = v3 = v1;
 
-            // SelectionSort time calcul (stop at size 10'000, took too much time after this
+            // Stop testing Selction Sort when we have vector sizes greater than 10'000
+            //  it takes way too long after that
             if (size <= 10000) {
                 t1_selectionSort = high_resolution_clock::now();
                 selectionSort(v1.begin(), v1.end());
@@ -311,37 +300,37 @@ void test1() {
             }
 
 
-            // quickSort time calcul
+            // Calculate Quick sort execution time
             t1_quickSort = high_resolution_clock::now();
             quickSort(v2.begin(), v2.end());
             t2_quickSort = high_resolution_clock::now();
             quickSortAverageTime += duration_cast<nanoseconds>(t2_quickSort - t1_quickSort).count();
 
 
-            // CountingSort time calcul
+            // Calculate Counting sort execution time
             t1_countingSort = high_resolution_clock::now();
             CountingSort(v3.begin(), v3.end(), w.begin(), [&](unsigned value) {
                 return value;
-            }, max /*alea.max()*/);
+            }, alea.max());
             t2_countingSort = high_resolution_clock::now();
             countingSortAverageTime += duration_cast<nanoseconds>(t2_countingSort - t1_countingSort).count();
 
         }
         double finalTime;
 
-        // SelectionSort display average time
+        // Display the average time of execution for the Selection sort
         finalTime = selectionSortAverageTime / REPLICATION;
         if (size <= 10000) {
             cout << "For a vector of " << size << " selectionSort took "
                  << finalTime << " ns -> " << finalTime / DIVISOR_NANO_TO_MILLIS << " ms." << endl;
         }
 
-        // QuickSort display average time
+        // Display the average time of execution for the Quick sort
         finalTime = quickSortAverageTime / REPLICATION;
         cout << "For a vector of " << size << " quickSort took "
              << finalTime << " ns -> " << finalTime / DIVISOR_NANO_TO_MILLIS << " ms." << endl;
 
-        // CountingSort display average time
+        // Display the average time of execution for the Counting sort
         finalTime = countingSortAverageTime / REPLICATION;
         cout << "For a vector of " << size << " CountingSort took "
              << finalTime << " ns -> " << finalTime / DIVISOR_NANO_TO_MILLIS << " ms." << endl;
@@ -359,28 +348,19 @@ void test2() {
 
     high_resolution_clock::time_point t1_selectionSort, t1_quickSort, t1_countingSort;
     high_resolution_clock::time_point t2_selectionSort, t2_quickSort, t2_countingSort;
-    double selectionSortAverageTime, quickSortAverageTime, countingSortAverageTime = 0.;
+    double selectionSortAverageTime = 0., quickSortAverageTime = 0., countingSortAverageTime = 0.;
 
+    vector<unsigned> v1(vectorSize), v2(vectorSize), v3(vectorSize);
+
+    mt19937_64 gen(0);
 
     for (auto i = maxValues.begin(); i != maxValues.end(); ++i) {
 
+        uniform_int_distribution<unsigned> alea (minValue, *i);
+
         for (unsigned k = 0; k < REPLICATION; ++k) {
 
-            vector<unsigned> v1(vectorSize), v2(vectorSize), v3(vectorSize);
-
-            /*
-            uniform_int_distribution<unsigned> alea (minValue, *i);
-            mt19937_64 gen(0);
-
             generate(v1.begin(), v1.end(), [&](){ return alea(gen); });
-            generate(v2.begin(), v2.end(), [&](){ return alea(gen); });
-            generate(v3.begin(), v3.end(), [&](){ return alea(gen); });
-             */
-
-            for (unsigned j = 0; j < vectorSize; ++j) {
-                unsigned randNum = rand() % ((*i) - minValue + 1) + minValue;
-                v1.at(j) = randNum;
-            }
 
             v2 = v3 = v1;
 
@@ -389,6 +369,13 @@ void test2() {
             quickSort(v2.begin(), v2.end());
             t2_quickSort = high_resolution_clock::now();
             quickSortAverageTime += duration_cast<nanoseconds>(t2_quickSort - t1_quickSort).count();
+
+
+            t1_countingSort = high_resolution_clock::now();
+            RadixSort(v3);
+            t2_countingSort = high_resolution_clock::now();
+            countingSortAverageTime += duration_cast<nanoseconds>(t2_countingSort - t1_countingSort).count();
+
         }
 
         double finalTime;
@@ -397,6 +384,12 @@ void test2() {
         finalTime = quickSortAverageTime / REPLICATION;
         cout << "For a vector of " << vectorSize << " [" << minValue << "," << (*i) <<"]" << " quickSort took "
              << finalTime << " ns -> " << finalTime / DIVISOR_NANO_TO_MILLIS << " ms." << endl;
+
+        finalTime = countingSortAverageTime / REPLICATION;
+        cout << "For a vector of " << vectorSize << " [" << minValue << "," << (*i) <<"]" << " RadixSort took "
+             << finalTime << " ns -> " << finalTime / DIVISOR_NANO_TO_MILLIS << " ms." << endl;
+
+        cout << endl;
     }
 }
 
