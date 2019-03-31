@@ -269,7 +269,7 @@ void test1() {
     vector<unsigned> vectorSizes {10, 100, 1000, 10000, 100000, 1000000};
     const unsigned randMin = 1;
     const unsigned randMax = 100;
-
+    const double DIVISOR_NANO_TO_MILLIS = 1e+6;
 
     //uniform_int_distribution<unsigned> alea (randMin, randMax);
     //mt19937_64 gen(0);
@@ -277,59 +277,89 @@ void test1() {
 
     high_resolution_clock::time_point t1_selectionSort, t1_quickSort, t1_countingSort;
     high_resolution_clock::time_point t2_selectionSort, t2_quickSort, t2_countingSort;
+    double selectionSortAverageTime, quickSortAverageTime, countingSortAverageTime = 0.;
+    unsigned replication = 15;
 
     for (unsigned int &size : vectorSizes) {
-        // Create a new vector contains : 1 ... currentSize)
-        vector<unsigned> v1(size), v2(size), v3(size), w(size);
+
+        for (unsigned k = 0; k < replication; ++k) {
+
+            // Create a new vector contains : 1 ... currentSize)
+            vector<unsigned> v1(size), v2(size), v3(size), w(size);
 
 
-        //generate(v1.begin(), v1.end(), [&](){ return alea(gen); });
-        //generate(v2.begin(), v2.end(), [&](){ return alea(gen); });
-        //generate(v3.begin(), v3.end(), [&](){ return alea(gen); });
+            //generate(v1.begin(), v1.end(), [&](){ return alea(gen); });
+            //generate(v2.begin(), v2.end(), [&](){ return alea(gen); });
+            //generate(v3.begin(), v3.end(), [&](){ return alea(gen); });
 
 
-        unsigned max = 0;
-        for (unsigned j = 0; j < size; ++j) {
-            unsigned randNum = rand()%(randMax-randMin + 1) + randMin;
+            unsigned max = 0;
+            for (unsigned j = 0; j < size; ++j) {
+                unsigned randNum = rand() % (randMax - randMin + 1) + randMin;
 
-            if (randNum > max) max = randNum;
-            v1.at(j) = randNum;
+                if (randNum > max) max = randNum;
+                v1.at(j) = randNum;
+            }
+
+            v2 = v3 = v1;
+
+            // SelectionSort time calcul (stop at size 10'000, took too much time after this
+            if (size <= 10000) {
+                t1_selectionSort = high_resolution_clock::now();
+                selectionSort(v1.begin(), v1.end());
+                t2_selectionSort = high_resolution_clock::now();
+                selectionSortAverageTime += duration_cast<nanoseconds>(t2_selectionSort - t1_selectionSort).count();
+
+                /*
+                cout << "For a vector of " << size << " selectionSort took ";
+                cout << duration_cast<nanoseconds>(t2_selectionSort - t1_selectionSort).count() << " ns"
+                     << " which converts to "
+                     << duration_cast<milliseconds>(t2_selectionSort - t1_selectionSort).count() << " in ms." << endl;
+                */
+            }
+
+
+            // quickSort time calcul
+            t1_quickSort = high_resolution_clock::now();
+            quickSort(v2.begin(), v2.end());
+            t2_quickSort = high_resolution_clock::now();
+            quickSortAverageTime += duration_cast<nanoseconds>(t2_quickSort - t1_quickSort).count();
+
+
+
+            // CountingSort time calcul
+            t1_countingSort = high_resolution_clock::now();
+            CountingSort(v3.begin(), v3.end(), w.begin(), [&](unsigned value) {
+                return value;
+            }, max /*alea.max()*/);
+            t2_countingSort = high_resolution_clock::now();
+            countingSortAverageTime += duration_cast<nanoseconds>(t2_countingSort - t1_countingSort).count();
+
         }
+        double finalTime;
 
-        v2 = v3 = v1;
-
-        // SelectionSort time calcul (stop at size 10'000, took too much time after this
-        if(size <= 10000) {
-            t1_selectionSort = high_resolution_clock::now();
-            selectionSort(v1.begin(), v1.end());
-            t2_selectionSort = high_resolution_clock::now();
+        // SelectionSort display average time
+        finalTime = selectionSortAverageTime / replication;
+        if (size <= 10000) {
             cout << "For a vector of " << size << " selectionSort took ";
-            cout << duration_cast<nanoseconds>(t2_selectionSort - t1_selectionSort).count() << " ns" << " which converts to "
-                 << duration_cast<milliseconds>(t2_selectionSort - t1_selectionSort).count() << " in ms." << endl;
+            cout << finalTime << " ns.";
+            cout << finalTime / DIVISOR_NANO_TO_MILLIS << " ms." << endl;
         }
 
-
-        // quickSort time calcul
-        t1_quickSort = high_resolution_clock::now();
-        quickSort(v2.begin(), v2.end());
-        t2_quickSort = high_resolution_clock::now();
+        // QuickSort display average time
+        finalTime = quickSortAverageTime / replication;
         cout << "For a vector of " << size << " quickSort took ";
-        cout << duration_cast<nanoseconds>(t2_quickSort - t1_quickSort).count() << " ns" << " which converts to "
-             << duration_cast<milliseconds>(t2_quickSort - t1_quickSort).count() << " in ms." << endl;
+        cout << finalTime << " ns.";
+        cout << finalTime / DIVISOR_NANO_TO_MILLIS << " ms." << endl;
 
-
-        // CountingSort time calcul
-        t1_countingSort = high_resolution_clock::now();
-        CountingSort(v3.begin(), v3.end(), w.begin(), [&](unsigned value) {
-            return value;
-        }, max /*alea.max()*/);
-        t2_countingSort = high_resolution_clock::now();
-
+        // CountingSort display average time
+        finalTime = countingSortAverageTime / replication;
         cout << "For a vector of " << size << " CountingSort took ";
-        cout << duration_cast<nanoseconds>(t2_countingSort - t1_countingSort).count() << " ns" << " which converts to "
-             << duration_cast<milliseconds>(t2_countingSort - t1_countingSort).count() << " in ms." << endl << endl;
-    }
+        cout << finalTime << " ns.";
+        cout << finalTime / DIVISOR_NANO_TO_MILLIS << " ms." << endl;
 
+        cout << endl;
+    }
 }
 
 void test2() {
