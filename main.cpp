@@ -340,23 +340,20 @@ void test1() {
         // SelectionSort display average time
         finalTime = selectionSortAverageTime / REPLICATION;
         if (size <= 10000) {
-            cout << "For a vector of " << size << " selectionSort took ";
-            cout << finalTime << " ns.";
-            cout << finalTime / DIVISOR_NANO_TO_MILLIS << " ms." << endl;
+            cout << "For a vector of " << size << " selectionSort took "
+                 << finalTime << " ns -> " << finalTime / DIVISOR_NANO_TO_MILLIS << " ms." << endl;
         }
 
         // QuickSort display average time
         finalTime = quickSortAverageTime / REPLICATION;
-        cout << "For a vector of " << size << " quickSort took ";
-        cout << finalTime << " ns.";
-        cout << finalTime / DIVISOR_NANO_TO_MILLIS << " ms." << endl;
+        cout << "For a vector of " << size << " quickSort took "
+             << finalTime << " ns -> " << finalTime / DIVISOR_NANO_TO_MILLIS << " ms." << endl;
 
         // CountingSort display average time
         finalTime = countingSortAverageTime / REPLICATION;
-        cout << "For a vector of " << size << " CountingSort took ";
-        cout << finalTime << " ns.";
-        cout << finalTime / DIVISOR_NANO_TO_MILLIS << " ms." << endl;
-
+        cout << "For a vector of " << size << " CountingSort took "
+             << finalTime << " ns -> " << finalTime / DIVISOR_NANO_TO_MILLIS << " ms." << endl;
+        
         cout << endl;
     }
 }
