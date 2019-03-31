@@ -7,6 +7,10 @@
 
 using namespace std;
 
+enum class Sorts {
+    SELECTION_SORT, QUICK_SORT, COUNTING_SORT
+};
+
 // selectionSort
 //
 // Effectue le tri par sélection des éléments entre begin
@@ -139,15 +143,35 @@ void display(RandomAccessIterator begin, RandomAccessIterator end) {
     cout << "]" << endl;
 }
 
+// Ca fait le test 1 : des	séries	de	données	de	taille	différente de	même	distribution (meme vectors pour tous les tris)
+// pa encore fini
+void test1() {
+
+    vector<int> vector_sizes {10, 100, 1000, 10000, 100000, 1000000};
+    int randMin = 1;
+    int randMax = 100;
+
+    for (auto i = vector_sizes.begin(); i < vector_sizes.end(); ++i) {
+        // Create a new vector contains : 1 ... currentSize)
+        vector<int> v1(*i);
+        for (int j = 0; j < *i; ++j) {
+            int randNum = rand()%(randMax-randMin + 1) + randMin;
+            v1.at(j) = randNum;
+        }
+        vector<int> v2 = v1;
+        vector<int> v3 = v1;
+
+        selectionSort(v1.begin(), v1.end());
+        quickSort(v2.begin(), v2.end());
+        // Add counting sort
+    }
+
+}
 
 
 int main(int argc, const char * argv[]) {
 
-    vector<int> vect {7,4,5,2,9,8};
-
-    display(vect.begin(), vect.end());
-    selectionSort(vect.begin(), vect.end());
-    display(vect.begin(), vect.end());
+    test1();
 
     return 0;
 }
