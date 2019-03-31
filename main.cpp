@@ -269,20 +269,19 @@ void test1() {
     vector<unsigned> vectorSizes {10, 100, 1000, 10000, 100000, 1000000};
     const unsigned randMin = 1;
     const unsigned randMax = 100;
+    const unsigned REPLICATION = 15;
     const double DIVISOR_NANO_TO_MILLIS = 1e+6;
-
-    //uniform_int_distribution<unsigned> alea (randMin, randMax);
-    //mt19937_64 gen(0);
-
 
     high_resolution_clock::time_point t1_selectionSort, t1_quickSort, t1_countingSort;
     high_resolution_clock::time_point t2_selectionSort, t2_quickSort, t2_countingSort;
     double selectionSortAverageTime, quickSortAverageTime, countingSortAverageTime = 0.;
-    unsigned replication = 15;
+
+    //uniform_int_distribution<unsigned> alea (randMin, randMax);
+    //mt19937_64 gen(0);
 
     for (unsigned int &size : vectorSizes) {
 
-        for (unsigned k = 0; k < replication; ++k) {
+        for (unsigned k = 0; k < REPLICATION; ++k) {
 
             // Create a new vector contains : 1 ... currentSize)
             vector<unsigned> v1(size), v2(size), v3(size), w(size);
@@ -339,7 +338,7 @@ void test1() {
         double finalTime;
 
         // SelectionSort display average time
-        finalTime = selectionSortAverageTime / replication;
+        finalTime = selectionSortAverageTime / REPLICATION;
         if (size <= 10000) {
             cout << "For a vector of " << size << " selectionSort took ";
             cout << finalTime << " ns.";
@@ -347,13 +346,13 @@ void test1() {
         }
 
         // QuickSort display average time
-        finalTime = quickSortAverageTime / replication;
+        finalTime = quickSortAverageTime / REPLICATION;
         cout << "For a vector of " << size << " quickSort took ";
         cout << finalTime << " ns.";
         cout << finalTime / DIVISOR_NANO_TO_MILLIS << " ms." << endl;
 
         // CountingSort display average time
-        finalTime = countingSortAverageTime / replication;
+        finalTime = countingSortAverageTime / REPLICATION;
         cout << "For a vector of " << size << " CountingSort took ";
         cout << finalTime << " ns.";
         cout << finalTime / DIVISOR_NANO_TO_MILLIS << " ms." << endl;
