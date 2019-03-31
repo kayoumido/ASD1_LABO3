@@ -308,13 +308,6 @@ void test1() {
                 selectionSort(v1.begin(), v1.end());
                 t2_selectionSort = high_resolution_clock::now();
                 selectionSortAverageTime += duration_cast<nanoseconds>(t2_selectionSort - t1_selectionSort).count();
-
-                /*
-                cout << "For a vector of " << size << " selectionSort took ";
-                cout << duration_cast<nanoseconds>(t2_selectionSort - t1_selectionSort).count() << " ns"
-                     << " which converts to "
-                     << duration_cast<milliseconds>(t2_selectionSort - t1_selectionSort).count() << " in ms." << endl;
-                */
             }
 
 
@@ -323,7 +316,6 @@ void test1() {
             quickSort(v2.begin(), v2.end());
             t2_quickSort = high_resolution_clock::now();
             quickSortAverageTime += duration_cast<nanoseconds>(t2_quickSort - t1_quickSort).count();
-
 
 
             // CountingSort time calcul
@@ -353,55 +345,64 @@ void test1() {
         finalTime = countingSortAverageTime / REPLICATION;
         cout << "For a vector of " << size << " CountingSort took "
              << finalTime << " ns -> " << finalTime / DIVISOR_NANO_TO_MILLIS << " ms." << endl;
-        
+
         cout << endl;
     }
 }
 
 void test2() {
-    const unsigned vectorSize = 100000;
+    const unsigned vectorSize = 1000000;
     const unsigned minValue = 1;
     const vector<unsigned> maxValues {10, 100, 1000, 10000, 100000, 1000000};
+    const unsigned REPLICATION = 15;
+    const double DIVISOR_NANO_TO_MILLIS = 1e+6;
+
+    high_resolution_clock::time_point t1_selectionSort, t1_quickSort, t1_countingSort;
+    high_resolution_clock::time_point t2_selectionSort, t2_quickSort, t2_countingSort;
+    double selectionSortAverageTime, quickSortAverageTime, countingSortAverageTime = 0.;
 
 
     for (auto i = maxValues.begin(); i != maxValues.end(); ++i) {
-        vector<unsigned> v1(vectorSize), v2(vectorSize), v3(vectorSize);
 
-        /*
-        uniform_int_distribution<unsigned> alea (minValue, *i);
-        mt19937_64 gen(0);
+        for (unsigned k = 0; k < REPLICATION; ++k) {
 
-        generate(v1.begin(), v1.end(), [&](){ return alea(gen); });
-        generate(v2.begin(), v2.end(), [&](){ return alea(gen); });
-        generate(v3.begin(), v3.end(), [&](){ return alea(gen); });
-         */
+            vector<unsigned> v1(vectorSize), v2(vectorSize), v3(vectorSize);
 
-        for (unsigned j = 0; j < vectorSize; ++j) {
-            unsigned randNum = rand()%(minValue-*i + 1) + minValue;
+            /*
+            uniform_int_distribution<unsigned> alea (minValue, *i);
+            mt19937_64 gen(0);
 
-            v1.at(j) = randNum;
+            generate(v1.begin(), v1.end(), [&](){ return alea(gen); });
+            generate(v2.begin(), v2.end(), [&](){ return alea(gen); });
+            generate(v3.begin(), v3.end(), [&](){ return alea(gen); });
+             */
+
+            for (unsigned j = 0; j < vectorSize; ++j) {
+                unsigned randNum = rand() % ((*i) - minValue + 1) + minValue;
+                v1.at(j) = randNum;
+            }
+
+            v2 = v3 = v1;
+
+            // quickSort time calcul
+            t1_quickSort = high_resolution_clock::now();
+            quickSort(v2.begin(), v2.end());
+            t2_quickSort = high_resolution_clock::now();
+            quickSortAverageTime += duration_cast<nanoseconds>(t2_quickSort - t1_quickSort).count();
         }
-        for (unsigned j = 0; j < vectorSize; ++j) {
-            unsigned randNum = rand()%(minValue-*i + 1) + minValue;
 
-            v2.at(j) = randNum;
-        }
-        for (unsigned j = 0; j < vectorSize; ++j) {
-            unsigned randNum = rand()%(minValue-*i + 1) + minValue;
+        double finalTime;
 
-            v3.at(j) = randNum;
-        }
-
-
-        selectionSort(v1.begin(), v1.end());
-        quickSort(v2.begin(), v2.end());
-        RadixSort(v3);
+        // QuickSort display average time
+        finalTime = quickSortAverageTime / REPLICATION;
+        cout << "For a vector of " << vectorSize << " [" << minValue << "," << (*i) <<"]" << " quickSort took "
+             << finalTime << " ns -> " << finalTime / DIVISOR_NANO_TO_MILLIS << " ms." << endl;
     }
 }
 
 int main(int argc, const char * argv[]) {
 
-    test1();
+    test2();
 
     return 0;
 }
