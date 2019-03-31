@@ -5,8 +5,11 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <random>
+#include <chrono>
 
 using namespace std;
+using namespace std::chrono;
 
 enum class Sorts {
     SELECTION_SORT, QUICK_SORT, COUNTING_SORT
@@ -263,27 +266,94 @@ void display(RandomAccessIterator begin, RandomAccessIterator end) {
 // pa encore fini
 void test1() {
 
-    vector<int> vector_sizes {10, 100, 1000, 10000, 100000, 1000000};
-    int randMin = 1;
-    int randMax = 100;
+    vector<unsigned> vectorSizes {10, 100, 1000, 10000, 100000, 1000000};
+    const unsigned randMin = 1;
+    const unsigned randMax = 100;
 
-    for (auto i = vector_sizes.begin(); i < vector_sizes.end(); ++i) {
+
+    //uniform_int_distribution<unsigned> alea (randMin, randMax);
+    //mt19937_64 gen(0);
+
+
+    high_resolution_clock::time_point t1;
+    high_resolution_clock::time_point t2;
+
+    for (unsigned int &size : vectorSizes) {
         // Create a new vector contains : 1 ... currentSize)
-        vector<int> v1(*i);
-        for (int j = 0; j < *i; ++j) {
-            int randNum = rand()%(randMax-randMin + 1) + randMin;
+        vector<unsigned> v1(size), v2(size), v3(size), w(size);
+
+
+        //generate(v1.begin(), v1.end(), [&](){ return alea(gen); });
+        //generate(v2.begin(), v2.end(), [&](){ return alea(gen); });
+        //generate(v3.begin(), v3.end(), [&](){ return alea(gen); });
+
+
+        unsigned max = 0;
+        for (unsigned j = 0; j < size; ++j) {
+            unsigned randNum = rand()%(randMax-randMin + 1) + randMin;
+
+            if (randNum > max) max = randNum;
             v1.at(j) = randNum;
         }
-        vector<int> v2 = v1;
-        vector<int> v3 = v1;
+
+        v2 = v3 = v1;
 
         selectionSort(v1.begin(), v1.end());
         quickSort(v2.begin(), v2.end());
-        // Add counting sort
+
+        t1 = high_resolution_clock::now();
+        CountingSort(v3.begin(), v3.end(), w.begin(), [&](unsigned value) {
+            return value;
+        }, max /*alea.max()*/);
+        t2 = high_resolution_clock::now();
+
+        cout << "For a vector of " << size << " CountingSort took ";
+        cout << duration_cast<nanoseconds>(t2 - t1).count() << " ns" << " which converts to "
+             << duration_cast<milliseconds>(t2 - t1).count() << " in ms." << endl;
     }
 
 }
 
+void test2() {
+    const unsigned vectorSize = 100000;
+    const unsigned minValue = 1;
+    const vector<unsigned> maxValues {10, 100, 1000, 10000, 100000, 1000000};
+
+
+    for (auto i = maxValues.begin(); i != maxValues.end(); ++i) {
+        vector<unsigned> v1(vectorSize), v2(vectorSize), v3(vectorSize);
+
+        /*
+        uniform_int_distribution<unsigned> alea (minValue, *i);
+        mt19937_64 gen(0);
+
+        generate(v1.begin(), v1.end(), [&](){ return alea(gen); });
+        generate(v2.begin(), v2.end(), [&](){ return alea(gen); });
+        generate(v3.begin(), v3.end(), [&](){ return alea(gen); });
+         */
+
+        for (unsigned j = 0; j < vectorSize; ++j) {
+            unsigned randNum = rand()%(minValue-*i + 1) + minValue;
+
+            v1.at(j) = randNum;
+        }
+        for (unsigned j = 0; j < vectorSize; ++j) {
+            unsigned randNum = rand()%(minValue-*i + 1) + minValue;
+
+            v2.at(j) = randNum;
+        }
+        for (unsigned j = 0; j < vectorSize; ++j) {
+            unsigned randNum = rand()%(minValue-*i + 1) + minValue;
+
+            v3.at(j) = randNum;
+        }
+
+
+        selectionSort(v1.begin(), v1.end());
+        quickSort(v2.begin(), v2.end());
+        RadixSort(v3);
+    }
+}
 
 int main(int argc, const char * argv[]) {
 
