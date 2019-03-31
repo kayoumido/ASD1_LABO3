@@ -62,7 +62,7 @@ void CountingSort(RandomAccessIterator first,
 
     // check if a max_key was given
     if (max_key == -1) {
-        // if not, loop through the array to find if
+        // if not, loop through to find it
         size_t max = 0;
 
         for (auto i = first; i != last; ++i) {
