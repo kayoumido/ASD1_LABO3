@@ -7,7 +7,6 @@
 
 #include <vector>
 #include <algorithm>
-#include <type_traits>
 
 namespace asd1 {
 
@@ -27,21 +26,21 @@ namespace asd1 {
         size_t shift;
     };
 
-    /**
-     Tri comptage générique
-
-     https://en.wikipedia.org/wiki/Counting_sort
-
-     @param first  [first,last] est la plage d'éléments d'un tableau à trier.
-     @param last   [first,last] est la plage d'éléments d'un tableau à trier.
-     @param output début du tableau où écrire le résultat. Doit être différent
-                   du tableau d'entrée
-     @param key fonction prenant un élément en entrée et retourant sa position
-                dans le tableau de comptage
-     @param max_key valeur maximale pouvant être retournée par key(...). Si -1,
-                    la fonction calcule cette valeur en parcourant le tableau une
-                    fois de plus
-     */
+     /**
+      * @brief Generic counting sort
+      *
+      * @note https://en.wikipedia.org/wiki/Counting_sort
+      *
+      * @param first    is the first element of the container to sort
+      * @param last     is the last element of the container to sort
+      * @param output   begining of the container where the result will be
+      *                 written. Must be different from the original container
+      * @param key  function that takes one element and return it's position within
+      *             within the counting vector
+      * @param max_key  max value that can be returned by key(). If it's value is -1
+      *                 then the function needs to calculate it's value by looping through the
+      *                 container to sort
+      */
     template<typename RandomAccessIterator, typename Fn>
     void CountingSort(RandomAccessIterator first,
                       RandomAccessIterator last,
@@ -94,14 +93,14 @@ namespace asd1 {
 
     }
 
-    /**
-     Tri par base d'entiers non signés sur 32 bits mis en oeuvre en appelant
-     4 fois le tri comptage en triant successivement par groupe de 8 bits.
-
-     https://en.wikipedia.org/wiki/Radix_sort
-
-     @param v vecteur à trier, modifié par cette fonction
-     */
+     /**
+      * @brief Sorts 32-bit unsigned integers by calling 4 times the counting sort
+      *         by sorting successvely 8-bit groups
+      *
+      * @note https://en.wikipedia.org/wiki/Radix_sort
+      *
+      * @param v vector to sort, modified by this function
+      */
     void RadixSort(std::vector<unsigned int> &v) {
 
         std::vector<unsigned> sorted(v.size(), 0);
