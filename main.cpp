@@ -275,8 +275,8 @@ void test1() {
     //mt19937_64 gen(0);
 
 
-    high_resolution_clock::time_point t1;
-    high_resolution_clock::time_point t2;
+    high_resolution_clock::time_point t1_selectionSort, t1_quickSort, t1_countingSort;
+    high_resolution_clock::time_point t2_selectionSort, t2_quickSort, t2_countingSort;
 
     for (unsigned int &size : vectorSizes) {
         // Create a new vector contains : 1 ... currentSize)
@@ -298,18 +298,36 @@ void test1() {
 
         v2 = v3 = v1;
 
-        selectionSort(v1.begin(), v1.end());
-        quickSort(v2.begin(), v2.end());
+        // SelectionSort time calcul (stop at size 10'000, took too much time after this
+        if(size <= 10000) {
+            t1_selectionSort = high_resolution_clock::now();
+            selectionSort(v1.begin(), v1.end());
+            t2_selectionSort = high_resolution_clock::now();
+            cout << "For a vector of " << size << " selectionSort took ";
+            cout << duration_cast<nanoseconds>(t2_selectionSort - t1_selectionSort).count() << " ns" << " which converts to "
+                 << duration_cast<milliseconds>(t2_selectionSort - t1_selectionSort).count() << " in ms." << endl;
+        }
 
-        t1 = high_resolution_clock::now();
+
+        // quickSort time calcul
+        t1_quickSort = high_resolution_clock::now();
+        quickSort(v2.begin(), v2.end());
+        t2_quickSort = high_resolution_clock::now();
+        cout << "For a vector of " << size << " quickSort took ";
+        cout << duration_cast<nanoseconds>(t2_quickSort - t1_quickSort).count() << " ns" << " which converts to "
+             << duration_cast<milliseconds>(t2_quickSort - t1_quickSort).count() << " in ms." << endl;
+
+
+        // CountingSort time calcul
+        t1_countingSort = high_resolution_clock::now();
         CountingSort(v3.begin(), v3.end(), w.begin(), [&](unsigned value) {
             return value;
         }, max /*alea.max()*/);
-        t2 = high_resolution_clock::now();
+        t2_countingSort = high_resolution_clock::now();
 
         cout << "For a vector of " << size << " CountingSort took ";
-        cout << duration_cast<nanoseconds>(t2 - t1).count() << " ns" << " which converts to "
-             << duration_cast<milliseconds>(t2 - t1).count() << " in ms." << endl;
+        cout << duration_cast<nanoseconds>(t2_countingSort - t1_countingSort).count() << " ns" << " which converts to "
+             << duration_cast<milliseconds>(t2_countingSort - t1_countingSort).count() << " in ms." << endl << endl;
     }
 
 }
