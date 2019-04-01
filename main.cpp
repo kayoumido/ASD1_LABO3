@@ -342,7 +342,7 @@ void test1() {
             cout << "Average execution time : " << finalTime << " ns -> "
                                                 << finalTime / DIVISOR_NANO_TO_MILLIS << " ms."
                                                 << endl;
-            cout << "Average number of execution : " << selectionSortAvgExecution << endl;
+            cout << "Average number of execution : " << selectionSortAvgExecution / REPLICATION << endl;
             cout << endl;
         }
 
@@ -353,7 +353,7 @@ void test1() {
         cout << "Average execution time : " << finalTime << " ns -> "
              << finalTime / DIVISOR_NANO_TO_MILLIS << " ms."
              << endl;
-        cout << "Average number of execution : " << quickSortAvgExecution << endl;
+        cout << "Average number of execution : " << quickSortAvgExecution / REPLICATION << endl;
         cout << endl;
 
         // Display the average time of execution for the Counting sort
@@ -363,7 +363,7 @@ void test1() {
         cout << "Average execution time : " << finalTime << " ns -> "
              << finalTime / DIVISOR_NANO_TO_MILLIS << " ms."
              << endl;
-        cout << "Average number of execution : " << countingSortAvgExecution << endl;
+        cout << "Average number of execution : " << countingSortAvgExecution / REPLICATION << endl;
 
 
         cout << endl << endl;
@@ -422,17 +422,6 @@ void test2() {
 
         double finalTime;
 
-//        // QuickSort display average time
-//        finalTime = quickSortAverageTime / REPLICATION;
-//        cout << "For a vector of " << vectorSize << " [" << minValue << "," << (*i) <<"]" << " quickSort took "
-//             << finalTime << " ns -> " << finalTime / DIVISOR_NANO_TO_MILLIS << " ms." << endl;
-//
-//        finalTime = countingSortAverageTime / REPLICATION;
-//        cout << "For a vector of " << vectorSize << " [" << minValue << "," << (*i) <<"]" << " RadixSort took "
-//             << finalTime << " ns -> " << finalTime / DIVISOR_NANO_TO_MILLIS << " ms." << endl;
-//
-//        cout << endl;
-
         // Display the average time of execution for the Quick sort
         finalTime = quickSortAverageTime / REPLICATION;
 
@@ -440,7 +429,7 @@ void test2() {
         cout << "Average execution time : " << finalTime << " ns -> "
              << finalTime / DIVISOR_NANO_TO_MILLIS << " ms."
              << endl;
-        cout << "Average number of execution : " << quickSortAvgExecution << endl;
+        cout << "Average number of execution : " << quickSortAvgExecution / REPLICATION << endl;
         cout << endl;
 
         // Display the average time of execution for the Counting sort
@@ -450,7 +439,7 @@ void test2() {
         cout << "Average execution time : " << finalTime << " ns -> "
              << finalTime / DIVISOR_NANO_TO_MILLIS << " ms."
              << endl;
-        cout << "Average number of execution : " << countingSortAvgExecution << endl;
+        cout << "Average number of execution : " << countingSortAvgExecution / REPLICATION << endl;
 
 
         cout << endl << endl;
