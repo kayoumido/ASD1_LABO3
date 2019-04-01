@@ -11,9 +11,7 @@
 using namespace std;
 using namespace std::chrono;
 
-enum class Sorts {
-    SELECTION_SORT, QUICK_SORT, COUNTING_SORT
-};
+unsigned counter = 0;
 
 // functor for radix sort
 template<typename T>
@@ -95,6 +93,8 @@ void CountingSort(RandomAccessIterator first,
         //  values get inserted into the ordered container
         --i;
 
+        ++counter;
+
         // get the real value of an element
         auto val = key(*i);
         // place it in the output in the correct area
@@ -148,6 +148,7 @@ void selectionSort(RandomAccessIterator begin, RandomAccessIterator end) {
 
         for (RandomAccessIterator j = i + 1; j < end; ++j) {
 
+            ++counter;
             if (*j < *imin) {
                 imin = j;
             }
@@ -239,6 +240,8 @@ void quickSort(RandomAccessIterator begin, RandomAccessIterator end) {
         return;
     }
 
+    ++counter;
+
     // Pivot selection
     RandomAccessIterator p = selectPivot(begin, end);
     // Swap the last element with the pivot before the partition call
@@ -274,6 +277,7 @@ void test1() {
     high_resolution_clock::time_point t1_selectionSort, t1_quickSort, t1_countingSort;
     high_resolution_clock::time_point t2_selectionSort, t2_quickSort, t2_countingSort;
     double selectionSortAverageTime = 0., quickSortAverageTime = 0., countingSortAverageTime = 0.;
+    unsigned selectionSortAvgExecution = 0, quickSortAvgExecution = 0, countingSortAvgExecution = 0;
 
     uniform_int_distribution<unsigned> alea (randMin, randMax);
     mt19937_64 gen(0);
@@ -292,49 +296,77 @@ void test1() {
             // Stop testing Selction Sort when we have vector sizes greater than 10'000
             //  it takes way too long after that
             if (size <= 10000) {
+                counter = 0;
+
                 t1_selectionSort = high_resolution_clock::now();
                 selectionSort(v1.begin(), v1.end());
                 t2_selectionSort = high_resolution_clock::now();
+
                 selectionSortAverageTime += duration_cast<nanoseconds>(t2_selectionSort - t1_selectionSort).count();
+                selectionSortAvgExecution += counter;
             }
 
 
             // Calculate Quick sort execution time
+            counter = 0;
+
             t1_quickSort = high_resolution_clock::now();
             quickSort(v2.begin(), v2.end());
             t2_quickSort = high_resolution_clock::now();
+
             quickSortAverageTime += duration_cast<nanoseconds>(t2_quickSort - t1_quickSort).count();
+            quickSortAvgExecution += counter;
 
 
             // Calculate Counting sort execution time
+            counter = 0;
+
             t1_countingSort = high_resolution_clock::now();
             CountingSort(v3.begin(), v3.end(), w.begin(), [&](unsigned value) {
                 return value;
             }, alea.max());
             t2_countingSort = high_resolution_clock::now();
+
             countingSortAverageTime += duration_cast<nanoseconds>(t2_countingSort - t1_countingSort).count();
+            countingSortAvgExecution += counter;
 
         }
         double finalTime;
 
+
         // Display the average time of execution for the Selection sort
-        finalTime = selectionSortAverageTime / REPLICATION;
         if (size <= 10000) {
-            cout << "For a vector of " << size << " selectionSort took "
-                 << finalTime << " ns -> " << finalTime / DIVISOR_NANO_TO_MILLIS << " ms." << endl;
+            finalTime = selectionSortAverageTime / REPLICATION;
+
+            cout << "Selection sort :" << endl;
+            cout << "Average execution time : " << finalTime << " ns -> "
+                                                << finalTime / DIVISOR_NANO_TO_MILLIS << " ms."
+                                                << endl;
+            cout << "Average number of execution : " << selectionSortAvgExecution << endl;
+            cout << endl;
         }
 
         // Display the average time of execution for the Quick sort
         finalTime = quickSortAverageTime / REPLICATION;
-        cout << "For a vector of " << size << " quickSort took "
-             << finalTime << " ns -> " << finalTime / DIVISOR_NANO_TO_MILLIS << " ms." << endl;
+
+        cout << "Quick sort :" << endl;
+        cout << "Average execution time : " << finalTime << " ns -> "
+             << finalTime / DIVISOR_NANO_TO_MILLIS << " ms."
+             << endl;
+        cout << "Average number of execution : " << quickSortAvgExecution << endl;
+        cout << endl;
 
         // Display the average time of execution for the Counting sort
         finalTime = countingSortAverageTime / REPLICATION;
-        cout << "For a vector of " << size << " CountingSort took "
-             << finalTime << " ns -> " << finalTime / DIVISOR_NANO_TO_MILLIS << " ms." << endl;
 
-        cout << endl;
+        cout << "Counting sort :" << endl;
+        cout << "Average execution time : " << finalTime << " ns -> "
+             << finalTime / DIVISOR_NANO_TO_MILLIS << " ms."
+             << endl;
+        cout << "Average number of execution : " << countingSortAvgExecution << endl;
+
+
+        cout << endl << endl;
     }
 }
 
@@ -347,7 +379,9 @@ void test2() {
 
     high_resolution_clock::time_point t1_selectionSort, t1_quickSort, t1_countingSort;
     high_resolution_clock::time_point t2_selectionSort, t2_quickSort, t2_countingSort;
-    double selectionSortAverageTime = 0., quickSortAverageTime = 0., countingSortAverageTime = 0.;
+    double quickSortAverageTime = 0., countingSortAverageTime = 0.;
+    unsigned quickSortAvgExecution = 0, countingSortAvgExecution = 0;
+
 
     vector<unsigned> v1(vectorSize), v2(vectorSize), v3(vectorSize);
 
@@ -363,32 +397,63 @@ void test2() {
 
             v2 = v3 = v1;
 
-            // quickSort time calcul
+            // Quick sort usage
+            counter = 0;
+
             t1_quickSort = high_resolution_clock::now();
             quickSort(v2.begin(), v2.end());
             t2_quickSort = high_resolution_clock::now();
-            quickSortAverageTime += duration_cast<nanoseconds>(t2_quickSort - t1_quickSort).count();
 
+            quickSortAverageTime += duration_cast<nanoseconds>(t2_quickSort - t1_quickSort).count();
+            quickSortAvgExecution += counter;
+
+
+            // Raidx sort usage
+            counter = 0;
 
             t1_countingSort = high_resolution_clock::now();
             RadixSort(v3);
             t2_countingSort = high_resolution_clock::now();
+
             countingSortAverageTime += duration_cast<nanoseconds>(t2_countingSort - t1_countingSort).count();
+            countingSortAvgExecution += counter;
 
         }
 
         double finalTime;
 
-        // QuickSort display average time
+//        // QuickSort display average time
+//        finalTime = quickSortAverageTime / REPLICATION;
+//        cout << "For a vector of " << vectorSize << " [" << minValue << "," << (*i) <<"]" << " quickSort took "
+//             << finalTime << " ns -> " << finalTime / DIVISOR_NANO_TO_MILLIS << " ms." << endl;
+//
+//        finalTime = countingSortAverageTime / REPLICATION;
+//        cout << "For a vector of " << vectorSize << " [" << minValue << "," << (*i) <<"]" << " RadixSort took "
+//             << finalTime << " ns -> " << finalTime / DIVISOR_NANO_TO_MILLIS << " ms." << endl;
+//
+//        cout << endl;
+
+        // Display the average time of execution for the Quick sort
         finalTime = quickSortAverageTime / REPLICATION;
-        cout << "For a vector of " << vectorSize << " [" << minValue << "," << (*i) <<"]" << " quickSort took "
-             << finalTime << " ns -> " << finalTime / DIVISOR_NANO_TO_MILLIS << " ms." << endl;
 
-        finalTime = countingSortAverageTime / REPLICATION;
-        cout << "For a vector of " << vectorSize << " [" << minValue << "," << (*i) <<"]" << " RadixSort took "
-             << finalTime << " ns -> " << finalTime / DIVISOR_NANO_TO_MILLIS << " ms." << endl;
-
+        cout << "Quick sort :" << endl;
+        cout << "Average execution time : " << finalTime << " ns -> "
+             << finalTime / DIVISOR_NANO_TO_MILLIS << " ms."
+             << endl;
+        cout << "Average number of execution : " << quickSortAvgExecution << endl;
         cout << endl;
+
+        // Display the average time of execution for the Counting sort
+        finalTime = countingSortAverageTime / REPLICATION;
+
+        cout << "Counting sort :" << endl;
+        cout << "Average execution time : " << finalTime << " ns -> "
+             << finalTime / DIVISOR_NANO_TO_MILLIS << " ms."
+             << endl;
+        cout << "Average number of execution : " << countingSortAvgExecution << endl;
+
+
+        cout << endl << endl;
     }
 }
 
