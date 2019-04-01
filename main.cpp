@@ -19,22 +19,24 @@ enum class Sorts {
 template<typename T>
 class Binary {
 public:
-    Binary(size_t shift) : shift(shift) {}
+    Binary(size_t pos) : position(pos) {}
 
 
     /**
-     * @TODO
-     * @param value
-     * @return
+     * @brief Get the binary value of a certain bytes position
+     *          of a T object
+     *
+     * @param value to get the bit value
+     * @return the bit value of the current bytes.
      */
     T operator()(T value) {
         unsigned mask = 0xff;
 
-        return ((value >> 8 * shift) & mask);
+        return ((value >> 8 * position) & mask);
     }
 
 private:
-    size_t shift;
+    size_t position;
 };
 
 /**
@@ -66,7 +68,6 @@ void CountingSort(RandomAccessIterator first,
         size_t max = 0;
 
         for (auto i = first; i != last; ++i) {
-
             if (key(*i) > max)
                 max = key(*i);
         }
