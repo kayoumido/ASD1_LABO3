@@ -44,7 +44,7 @@ private:
  *
  * @param first    is the first element of the container to sort
  * @param last     is the last element of the container to sort
- * @param output   begining of the container where the result will be
+ * @param output   beginning of the container where the result will be
  *                 written. Must be different from the original container
  * @param key  function that takes one element and return it's position within
  *             within the counting vector
@@ -82,7 +82,7 @@ void CountingSort(RandomAccessIterator first,
         count[val] = count[val] + 1;
     }
 
-    // loop through the cout vector to set the range in which elements will be placed̉
+    // loop through the count vector to set the range in which elements will be placed̉
     for (size_t i = 1; i < count.size(); ++i) {
         count[i] = count[i] + count[i - 1];
     }
@@ -262,8 +262,6 @@ void display(RandomAccessIterator begin, RandomAccessIterator end) {
     cout << "]" << endl;
 }
 
-// Ca fait le test 1 : des	séries	de	données	de	taille	différente de	même	distribution (meme vectors pour tous les tris)
-// pa encore fini
 void test1() {
 
     vector<unsigned> vectorSizes {10, 100, 1000, 10000, 100000, 1000000};
