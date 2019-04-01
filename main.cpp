@@ -46,10 +46,10 @@ private:
  * @param last     is the last element of the container to sort
  * @param output   beginning of the container where the result will be
  *                 written. Must be different from the original container
- * @param key  function that takes one element and return it's position within
- *             within the counting vector
- * @param max_key  max value that can be returned by key(). If it's value is -1
- *                 then the function needs to calculate it's value by looping through the
+ * @param key  function that takes one element and return its position within
+ *             the counting vector
+ * @param max_key  max value that can be returned by key(). If its value is -1
+ *                 then the function needs to calculate its value by looping through the
  *                 container to sort
  */
 template<typename RandomAccessIterator, typename Fn>
@@ -281,7 +281,7 @@ void test1() {
 
         for (unsigned k = 0; k < REPLICATION; ++k) {
 
-            // Create a new vector where it's size varies depending on the values in vectorSizes
+            // Create a new vector where its size varies depending on the values in vectorSizes
             vector<unsigned> v1(size), v2(size), v3(size), w(size);
 
             // Generate random data in the vectors
