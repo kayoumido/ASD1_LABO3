@@ -333,6 +333,7 @@ void test1() {
         }
         double finalTime;
 
+        cout << "Results for a vector of " << size << " elements :" << endl;
 
         // Display the average time of execution for the Selection sort
         if (size <= 10000) {
@@ -421,6 +422,8 @@ void test2() {
         }
 
         double finalTime;
+
+        cout << "Results for a range of [1, " << *i << "] :" << endl;
 
         // Display the average time of execution for the Quick sort
         finalTime = quickSortAverageTime / REPLICATION;
