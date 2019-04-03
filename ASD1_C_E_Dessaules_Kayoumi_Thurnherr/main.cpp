@@ -11,8 +11,6 @@
 using namespace std;
 using namespace std::chrono;
 
-unsigned counter = 0;
-
 // functor for radix sort
 template<typename T>
 class Binary {
@@ -93,8 +91,6 @@ void CountingSort(RandomAccessIterator first,
         //  values get inserted into the ordered container
         --i;
 
-        ++counter;
-
         // get the real value of an element
         auto val = key(*i);
         // place it in the output in the correct area
@@ -148,7 +144,6 @@ void selectionSort(RandomAccessIterator begin, RandomAccessIterator end) {
 
         for (RandomAccessIterator j = i + 1; j < end; ++j) {
 
-            ++counter;
             if (*j < *imin) {
                 imin = j;
             }
@@ -240,8 +235,6 @@ void quickSort(RandomAccessIterator begin, RandomAccessIterator end) {
         return;
     }
 
-    ++counter;
-
     // Pivot selection
     RandomAccessIterator p = selectPivot(begin, end);
     // Swap the last element with the pivot before the partition call
@@ -277,7 +270,6 @@ void test1() {
     high_resolution_clock::time_point t1_selectionSort, t1_quickSort, t1_countingSort;
     high_resolution_clock::time_point t2_selectionSort, t2_quickSort, t2_countingSort;
     double selectionSortAverageTime = 0., quickSortAverageTime = 0., countingSortAverageTime = 0.;
-    unsigned selectionSortAvgExecution = 0, quickSortAvgExecution = 0, countingSortAvgExecution = 0;
 
     uniform_int_distribution<unsigned> alea (randMin, randMax);
     mt19937_64 gen(0);
@@ -296,31 +288,24 @@ void test1() {
             // Stop testing Selction Sort when we have vector sizes greater than 10'000
             //  it takes way too long after that
             if (size <= 10000) {
-                counter = 0;
 
                 t1_selectionSort = high_resolution_clock::now();
                 selectionSort(v1.begin(), v1.end());
                 t2_selectionSort = high_resolution_clock::now();
 
                 selectionSortAverageTime += duration_cast<nanoseconds>(t2_selectionSort - t1_selectionSort).count();
-                selectionSortAvgExecution += counter;
             }
 
 
             // Calculate Quick sort execution time
-            counter = 0;
-
             t1_quickSort = high_resolution_clock::now();
             quickSort(v2.begin(), v2.end());
             t2_quickSort = high_resolution_clock::now();
 
             quickSortAverageTime += duration_cast<nanoseconds>(t2_quickSort - t1_quickSort).count();
-            quickSortAvgExecution += counter;
 
 
             // Calculate Counting sort execution time
-            counter = 0;
-
             t1_countingSort = high_resolution_clock::now();
             CountingSort(v3.begin(), v3.end(), w.begin(), [&](unsigned value) {
                 return value;
@@ -328,7 +313,6 @@ void test1() {
             t2_countingSort = high_resolution_clock::now();
 
             countingSortAverageTime += duration_cast<nanoseconds>(t2_countingSort - t1_countingSort).count();
-            countingSortAvgExecution += counter;
 
         }
         double finalTime;
@@ -343,7 +327,6 @@ void test1() {
             cout << "Average execution time : " << finalTime << " ns -> "
                                                 << finalTime / DIVISOR_NANO_TO_MILLIS << " ms."
                                                 << endl;
-            cout << "Average number of execution : " << selectionSortAvgExecution / REPLICATION << endl;
             cout << endl;
         }
 
@@ -354,7 +337,6 @@ void test1() {
         cout << "Average execution time : " << finalTime << " ns -> "
              << finalTime / DIVISOR_NANO_TO_MILLIS << " ms."
              << endl;
-        cout << "Average number of execution : " << quickSortAvgExecution / REPLICATION << endl;
         cout << endl;
 
         // Display the average time of execution for the Counting sort
@@ -364,7 +346,6 @@ void test1() {
         cout << "Average execution time : " << finalTime << " ns -> "
              << finalTime / DIVISOR_NANO_TO_MILLIS << " ms."
              << endl;
-        cout << "Average number of execution : " << countingSortAvgExecution / REPLICATION << endl;
 
 
         cout << endl << endl;
@@ -378,13 +359,11 @@ void test2() {
     const unsigned REPLICATION = 15;
     const double DIVISOR_NANO_TO_MILLIS = 1e+6;
 
-    high_resolution_clock::time_point t1_selectionSort, t1_quickSort, t1_countingSort;
-    high_resolution_clock::time_point t2_selectionSort, t2_quickSort, t2_countingSort;
-    double quickSortAverageTime = 0., countingSortAverageTime = 0.;
-    unsigned quickSortAvgExecution = 0, countingSortAvgExecution = 0;
+    high_resolution_clock::time_point t1_quickSort, t1_radixSort, t1_countingSort;
+    high_resolution_clock::time_point t2_quickSort, t2_radixSort, t2_countingSort;
+    double quickSortAverageTime = 0., radixSortAverageTime = 0.;
 
-
-    vector<unsigned> v1(vectorSize), v2(vectorSize), v3(vectorSize);
+    vector<unsigned> v1(vectorSize), v2(vectorSize);
 
     mt19937_64 gen(0);
 
@@ -396,29 +375,22 @@ void test2() {
 
             generate(v1.begin(), v1.end(), [&](){ return alea(gen); });
 
-            v2 = v3 = v1;
+            v2 = v1;
 
             // Quick sort usage
-            counter = 0;
-
             t1_quickSort = high_resolution_clock::now();
-            quickSort(v2.begin(), v2.end());
+            quickSort(v1.begin(), v1.end());
             t2_quickSort = high_resolution_clock::now();
 
             quickSortAverageTime += duration_cast<nanoseconds>(t2_quickSort - t1_quickSort).count();
-            quickSortAvgExecution += counter;
-
 
             // Raidx sort usage
-            counter = 0;
+            t1_radixSort = high_resolution_clock::now();
+            RadixSort(v2);
+            t2_radixSort = high_resolution_clock::now();
 
-            t1_countingSort = high_resolution_clock::now();
-            RadixSort(v3);
-            t2_countingSort = high_resolution_clock::now();
-
-            countingSortAverageTime += duration_cast<nanoseconds>(t2_countingSort - t1_countingSort).count();
-            countingSortAvgExecution += counter;
-
+            radixSortAverageTime += duration_cast<nanoseconds>(t2_radixSort - t1_radixSort).count();
+            
         }
 
         double finalTime;
@@ -432,18 +404,15 @@ void test2() {
         cout << "Average execution time : " << finalTime << " ns -> "
              << finalTime / DIVISOR_NANO_TO_MILLIS << " ms."
              << endl;
-        cout << "Average number of execution : " << quickSortAvgExecution / REPLICATION << endl;
         cout << endl;
 
         // Display the average time of execution for the Counting sort
-        finalTime = countingSortAverageTime / REPLICATION;
+        finalTime = radixSortAverageTime / REPLICATION;
 
-        cout << "Counting sort :" << endl;
+        cout << "Radix sort :" << endl;
         cout << "Average execution time : " << finalTime << " ns -> "
              << finalTime / DIVISOR_NANO_TO_MILLIS << " ms."
              << endl;
-        cout << "Average number of execution : " << countingSortAvgExecution / REPLICATION << endl;
-
 
         cout << endl << endl;
     }
@@ -451,9 +420,7 @@ void test2() {
 
 int main(int argc, const char * argv[]) {
 
-    test1();
+    test2();
 
     return 0;
 }
-// 
-// Dans cette première série de test, nous évaluons le temps moyen d’exécution et le nombre moyen d’exécution de chaque tri, sur des vecteurs de taille différente mais ayant la même distribution. Nous répétons le tout 15 fois seulement car, plus de répétitions rendaient le test trop long.

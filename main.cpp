@@ -1,6 +1,12 @@
-/**
- * HEADER todo
- */
+//
+//  main.cpp
+//
+//  Labo 3 - tris
+//
+//  ASD1 2019
+//
+//  Dessaules Loïc, Kayoumi Doran, Thurnherr Gabrielle
+//
 
 #include <iostream>
 #include <vector>
